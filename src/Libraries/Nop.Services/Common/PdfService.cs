@@ -15,6 +15,7 @@ using Nop.Core.Domain.Localization;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Shipping;
 using Nop.Core.Domain.Tax;
+using Nop.Core.Domain.Vendors;
 using Nop.Core.Html;
 using Nop.Services.Catalog;
 using Nop.Services.Configuration;
@@ -59,6 +60,7 @@ namespace Nop.Services.Common
         private readonly TaxSettings _taxSettings;
         private readonly AddressSettings _addressSettings;
         private readonly IVendorService _vendorService;
+        private readonly VendorSettings _vendorSettings;
 
         #endregion
 
@@ -90,6 +92,7 @@ namespace Nop.Services.Common
         /// <param name="taxSettings">Tax settings</param>
         /// <param name="addressSettings">Address settings</param>
         /// <param name="vendorService">Vendor service</param>
+        /// <param name="vendorSettings">Vendor settings</param>
         public PdfService(ILocalizationService localizationService, 
             ILanguageService languageService,
             IWorkContext workContext,
@@ -112,7 +115,8 @@ namespace Nop.Services.Common
             PdfSettings pdfSettings,
             TaxSettings taxSettings,
             AddressSettings addressSettings,
-            IVendorService vendorService)
+            IVendorService vendorService,
+            VendorSettings vendorSettings)
         {
             this._localizationService = localizationService;
             this._languageService = languageService;
@@ -137,6 +141,7 @@ namespace Nop.Services.Common
             this._taxSettings = taxSettings;
             this._addressSettings = addressSettings;
             this._vendorService = vendorService;
+            this._vendorSettings = vendorSettings;
         }
 
         #endregion
@@ -720,7 +725,7 @@ namespace Nop.Services.Common
             var orderItems = order.OrderItems;
 
             var count = 4 + (_catalogSettings.ShowSkuOnProductDetailsPage ? 1 : 0)
-                        + (_catalogSettings.ShowVendorNameOnProductDetailsPage ? 1 : 0);
+                        + (_vendorSettings.ShowVendorOnOrderDetailsPage ? 1 : 0);
             
 
             var productsTable = new PdfPTable(count)
@@ -754,7 +759,7 @@ namespace Nop.Services.Common
             }
 
             //Vendor name
-            if (_catalogSettings.ShowVendorNameOnProductDetailsPage)
+            if (_vendorSettings.ShowVendorOnOrderDetailsPage)
             {
                 cellProductItem = GetPdfCell("PDFInvoice.VendorName", lang, font);
                 cellProductItem.BackgroundColor = BaseColor.LIGHT_GRAY;
@@ -780,8 +785,8 @@ namespace Nop.Services.Common
             cellProductItem.HorizontalAlignment = Element.ALIGN_CENTER;
             productsTable.AddCell(cellProductItem);
 
-            var vendors = _vendorService.GetAllVendors(vendorIds: orderItems.Select(item => item.Product.VendorId).ToArray());
-
+            var vendors = _vendorSettings.ShowVendorOnOrderDetailsPage ? _vendorService.GetVendorsByIds(orderItems.Select(item => item.Product.VendorId).ToArray()) : new List<Vendor>();
+            
             foreach (var orderItem in orderItems)
             {
                 var p = orderItem.Product;
@@ -832,7 +837,7 @@ namespace Nop.Services.Common
                 }
 
                 //Vendor name
-                if (_catalogSettings.ShowVendorNameOnProductDetailsPage)
+                if (_vendorSettings.ShowVendorOnOrderDetailsPage)
                 {
                     var vendorName = vendors.FirstOrDefault(v=>v.Id==p.VendorId)?.Name ?? string.Empty;
                     cellProductItem = GetPdfCell(vendorName, font);

@@ -5556,12 +5556,6 @@
   <LocaleResource Name="Admin.Configuration.Settings.Catalog.ShowShareButton.Hint">
     <Value>Check to show share button on product details page.</Value>
   </LocaleResource>
-  <LocaleResource Name="Admin.Configuration.Settings.Catalog.ShowVendorNameOnProductDetailsPage">
-    <Value>Show vendor name on product details page</Value>
-  </LocaleResource>
-  <LocaleResource Name="Admin.Configuration.Settings.Catalog.ShowVendorNameOnProductDetailsPage.Hint">
-    <Value>Check to show vendor name of product on the product details page.</Value>
-  </LocaleResource>  
   <LocaleResource Name="Admin.Configuration.Settings.Catalog.SortOptions.DisplayOrder">
     <Value>Display order</Value>
   </LocaleResource>
@@ -7956,6 +7950,12 @@
   <LocaleResource Name="Admin.Configuration.Settings.Vendor.NotifyStoreOwnerAboutVendorInformationChange.Hint">
     <Value>Check to notify a store owner about vendor information changes.</Value>
   </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Settings.Vendor.ShowVendorOnOrderDetailsPage">
+    <Value>Show vendor name on order details page</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Settings.Vendor.ShowVendorOnOrderDetailsPage.Hint">
+    <Value>Check to show vendor name of product on the order details page.</Value>
+  </LocaleResource>  
   <LocaleResource Name="Admin.Configuration.Settings.Vendor.ShowVendorOnProductDetailsPage">
     <Value>Show vendor on product details page</Value>
   </LocaleResource>

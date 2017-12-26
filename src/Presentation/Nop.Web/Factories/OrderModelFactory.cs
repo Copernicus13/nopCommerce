@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
@@ -7,6 +8,7 @@ using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Shipping;
 using Nop.Core.Domain.Tax;
+using Nop.Core.Domain.Vendors;
 using Nop.Services.Catalog;
 using Nop.Services.Directory;
 using Nop.Services.Helpers;
@@ -55,6 +57,7 @@ namespace Nop.Web.Factories
         private readonly RewardPointsSettings _rewardPointsSettings;
         private readonly PdfSettings _pdfSettings;
         private readonly IVendorService _vendorService;
+        private readonly VendorSettings _vendorSettings;
 
         #endregion
 
@@ -83,7 +86,8 @@ namespace Nop.Web.Factories
             AddressSettings addressSettings,
             RewardPointsSettings rewardPointsSettings,
             PdfSettings pdfSettings,
-            IVendorService vendorService)
+            IVendorService vendorService,
+            VendorSettings vendorSettings)
         {
             this._addressModelFactory = addressModelFactory;
             this._orderService = orderService;
@@ -110,6 +114,7 @@ namespace Nop.Web.Factories
             this._rewardPointsSettings = rewardPointsSettings;
             this._pdfSettings = pdfSettings;
             this._vendorService = vendorService;
+            this._vendorSettings = vendorSettings;
         }
 
         #endregion
@@ -383,13 +388,12 @@ namespace Nop.Web.Factories
 
             //purchased products
             model.ShowSku = _catalogSettings.ShowSkuOnProductDetailsPage;
-            model.ShowVendorName = _catalogSettings.ShowVendorNameOnProductDetailsPage;
+            model.ShowVendorName = _vendorSettings.ShowVendorOnOrderDetailsPage;
 
             var orderItems = order.OrderItems;
 
-            var vendors = _vendorService.GetAllVendors(vendorIds: orderItems.Select(oi => oi.Product.VendorId)
-                .Where(id => id > 0).ToArray());
-
+            var vendors = _vendorSettings.ShowVendorOnOrderDetailsPage ? _vendorService.GetVendorsByIds(orderItems.Select(item => item.Product.VendorId).ToArray()) : new List<Vendor>();
+            
             foreach (var orderItem in orderItems)
             {
                 var orderItemModel = new OrderDetailsModel.OrderItemModel

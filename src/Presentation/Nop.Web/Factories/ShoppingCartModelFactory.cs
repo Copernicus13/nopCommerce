@@ -87,6 +87,7 @@ namespace Nop.Web.Factories
         private readonly RewardPointsSettings _rewardPointsSettings;
         private readonly CustomerSettings _customerSettings;
         private readonly IVendorService _vendorService;
+        private readonly VendorSettings _vendorSettings;
 
         #endregion
 
@@ -131,7 +132,8 @@ namespace Nop.Web.Factories
             AddressSettings addressSettings,
             RewardPointsSettings rewardPointsSettings,
             CustomerSettings customerSettings,
-            IVendorService vendorService)
+            IVendorService vendorService,
+            VendorSettings vendorSettings)
         {
             this._addressModelFactory = addressModelFactory;
             this._workContext = workContext;
@@ -175,6 +177,7 @@ namespace Nop.Web.Factories
             this._rewardPointsSettings = rewardPointsSettings;
             this._customerSettings = customerSettings;
             this._vendorService = vendorService;
+            this._vendorSettings = vendorSettings;
         }
 
         #endregion
@@ -335,7 +338,6 @@ namespace Nop.Web.Factories
 
             if (sci == null)
                 throw new ArgumentNullException(nameof(sci));
-
 
             var cartItemModel = new ShoppingCartModel.ShoppingCartItemModel
             {
@@ -801,7 +803,7 @@ namespace Nop.Web.Factories
             model.IsEditable = isEditable;
             model.ShowProductImages = _shoppingCartSettings.ShowProductImagesOnShoppingCart;
             model.ShowSku = _catalogSettings.ShowSkuOnProductDetailsPage;
-            model.ShowVendorName = _catalogSettings.ShowVendorNameOnProductDetailsPage;
+            model.ShowVendorName = _vendorSettings.ShowVendorOnOrderDetailsPage;
             var checkoutAttributesXml = _workContext.CurrentCustomer.GetAttribute<string>(SystemCustomerAttributeNames.CheckoutAttributes, _genericAttributeService, _storeContext.CurrentStore.Id);
             var minOrderSubtotalAmountOk = _orderProcessingService.ValidateMinOrderSubtotalAmount(cart);
             if (!minOrderSubtotalAmountOk)
@@ -841,7 +843,7 @@ namespace Nop.Web.Factories
             //checkout attributes
             model.CheckoutAttributes = PrepareCheckoutAttributeModels(cart);
 
-            var vendors = _vendorService.GetAllVendors(vendorIds: cart.Select(item => item.Product.VendorId).ToArray());
+            var vendors = _vendorSettings.ShowVendorOnOrderDetailsPage ? _vendorService.GetVendorsByIds(cart.Select(item => item.Product.VendorId).ToArray()) : new List<Vendor>();
     
             //cart items
             foreach (var sci in cart)

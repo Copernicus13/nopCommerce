@@ -26,12 +26,12 @@ set @resources='
   <LocaleResource Name="ShoppingCart.VendorName">
     <Value>Vendor name</Value>
   </LocaleResource>
-  <LocaleResource Name="Admin.Configuration.Settings.Catalog.ShowVendorNameOnProductDetailsPage">
-    <Value>Show vendor name on product details page</Value>
+  <LocaleResource Name="Admin.Configuration.Settings.Vendor.ShowVendorOnOrderDetailsPage">
+    <Value>Show vendor name on order details page</Value>
   </LocaleResource>
-  <LocaleResource Name="Admin.Configuration.Settings.Catalog.ShowVendorNameOnProductDetailsPage.Hint">
-    <Value>Check to show vendor name of product on the product details page.</Value>
-  </LocaleResource>    
+  <LocaleResource Name="Admin.Configuration.Settings.Vendor.ShowVendorOnOrderDetailsPage.Hint">
+    <Value>Check to show vendor name of product on the order details page.</Value>
+  </LocaleResource>  
 </Language>
 '
 
