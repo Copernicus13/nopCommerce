@@ -37,7 +37,13 @@ set @resources='
   </LocaleResource>    
   <LocaleResource Name="Admin.Configuration.Settings.Catalog.DefaultViewMode.Hint">
     <Value>Choose the default view mode for catalog page.</Value>
-  </LocaleResource>     
+  </LocaleResource> 
+  <LocaleResource Name="Admin.Catalog.Products.Fields.Sku.Reserved">
+    <Value>The entered SKU is already reserved for the product ''{0}''</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Catalog.Products.ProductAttributes.AttributeCombinations.Fields.Sku.Reserved">
+    <Value>The entered SKU is already reserved for one of combinations of the product ''{0}''</Value>
+  </LocaleResource>    
 </Language>
 '
 
