@@ -42,12 +42,21 @@
                                             type: "POST",
                                             dataType: "json",
                                             data: addAntiForgeryToken
+                                        },
+                                        destroy: {
+                                            url: "@Html.Raw(Url.Action("DeleteWishlists", "ShoppingCart"))",
+                                            type: "POST",
+                                            dataType: "json",
+                                            data: addAntiForgeryToken
                                         }
                                     },
                                     schema: {
                                         data: "Data",
                                         total: "Total",
-                                        errors: "Errors"
+                                        errors: "Errors",
+                                        model: {
+                                            id: "Id"
+                                        }
                                     },
                                     error: function(e) {
                                         display_kendoui_grid_error(e);
@@ -64,6 +73,10 @@
                                     pageSizes: [@(gridPageSizes)],
                                     @await Html.PartialAsync("_GridPagerMessages")
                                 },
+                                editable: {
+                                    confirmation: "@T("Admin.Common.DeleteConfirmation")",
+                                    mode: "inline"
+                                },
                                 //details grid
                                 detailInit: detailInit,
                                 scrollable: false,
@@ -76,6 +89,10 @@
                                         field: "TotalItems",
                                         title: "@T("Admin.CurrentCarts.TotalItems")",
                                         width: 150
+                                    }, {
+                                        command: { name: "destroy", text: "@T("Admin.Common.Delete")" },
+                                        title: "@T("Admin.Common.Delete")",
+                                        width: 100
                                     }
                                 ]
                             });

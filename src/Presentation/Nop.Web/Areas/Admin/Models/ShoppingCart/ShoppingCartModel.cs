@@ -3,7 +3,7 @@ using Nop.Web.Framework.Mvc.Models;
 
 namespace Nop.Web.Areas.Admin.Models.ShoppingCart
 {
-    public partial class ShoppingCartModel : BaseNopModel
+    public partial class ShoppingCartModel : BaseNopEntityModel
     {
         [NopResourceDisplayName("Admin.CurrentCarts.Customer")]
         public int CustomerId { get; set; }

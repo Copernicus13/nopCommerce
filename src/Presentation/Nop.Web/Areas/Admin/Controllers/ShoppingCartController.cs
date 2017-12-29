@@ -13,6 +13,7 @@ using Nop.Services.Security;
 using Nop.Services.Stores;
 using Nop.Services.Tax;
 using Nop.Web.Framework.Kendoui;
+using Nop.Web.Framework.Mvc;
 
 namespace Nop.Web.Areas.Admin.Controllers
 {
@@ -29,6 +30,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         private readonly IPermissionService _permissionService;
         private readonly ILocalizationService _localizationService;
         private readonly IProductAttributeFormatter _productAttributeFormatter;
+        private readonly IShoppingCartService _shoppingCartService;
 
         #endregion
 
@@ -42,7 +44,8 @@ namespace Nop.Web.Areas.Admin.Controllers
             IPriceCalculationService priceCalculationService,
             IPermissionService permissionService, 
             ILocalizationService localizationService,
-            IProductAttributeFormatter productAttributeFormatter)
+            IProductAttributeFormatter productAttributeFormatter,
+            IShoppingCartService shoppingCartService)
         {
             this._customerService = customerService;
             this._dateTimeHelper = dateTimeHelper;
@@ -53,6 +56,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             this._permissionService = permissionService;
             this._localizationService = localizationService;
             this._productAttributeFormatter = productAttributeFormatter;
+            this._shoppingCartService = shoppingCartService;
         }
 
         #endregion
@@ -84,6 +88,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             {
                 Data = customers.Select(x => new ShoppingCartModel
                 {
+                    Id = x.Id,
                     CustomerId = x.Id,
                     CustomerEmail = x.IsRegistered() ? x.Email : _localizationService.GetResource("Admin.Customers.Guest"),
                     TotalItems = x.ShoppingCartItems.Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart).ToList().GetTotalProducts()
@@ -128,6 +133,20 @@ namespace Nop.Web.Areas.Admin.Controllers
             return Json(gridModel);
         }
 
+        [HttpPost]
+        public virtual IActionResult DeleteCart(int id)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCurrentCarts))
+                return AccessDeniedKendoGridJson();
+
+            var customer = _customerService.GetCustomerById(id);
+            var cart = customer.ShoppingCartItems.Where(x => x.ShoppingCartType == ShoppingCartType.ShoppingCart).ToList();
+
+            cart.ForEach(cartItem => _shoppingCartService.DeleteShoppingCartItem(cartItem));
+
+            return new NullJsonResult();
+        }
+
         //wishlists
         public virtual IActionResult CurrentWishlists()
         {
@@ -153,6 +172,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             {
                 Data = customers.Select(x => new ShoppingCartModel
                 {
+                    Id = x.Id,
                     CustomerId = x.Id,
                     CustomerEmail = x.IsRegistered() ? x.Email : _localizationService.GetResource("Admin.Customers.Guest"),
                     TotalItems = x.ShoppingCartItems.Where(sci => sci.ShoppingCartType == ShoppingCartType.Wishlist).ToList().GetTotalProducts()
@@ -195,6 +215,20 @@ namespace Nop.Web.Areas.Admin.Controllers
             };
 
             return Json(gridModel);
+        }
+
+        [HttpPost]
+        public virtual IActionResult DeleteWishlists(int id)
+        {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManageCurrentCarts))
+                return AccessDeniedKendoGridJson();
+
+            var customer = _customerService.GetCustomerById(id);
+            var cart = customer.ShoppingCartItems.Where(x => x.ShoppingCartType == ShoppingCartType.Wishlist).ToList();
+
+            cart.ForEach(cartItem => _shoppingCartService.DeleteShoppingCartItem(cartItem));
+
+            return new NullJsonResult();
         }
 
         #endregion
